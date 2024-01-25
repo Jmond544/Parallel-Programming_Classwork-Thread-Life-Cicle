@@ -1,9 +1,10 @@
 #include <thread>
 #include <chrono>
 #include <cstdio>
+#include <atomic>
 
-// Global variable to control the chopping loop in vegetable_chopper function
-bool chopping = true;
+// Atomic variable to ensure thread-safe operations
+std::atomic<bool> chopping(true); 
 
 // Function representing the vegetable chopping task for each worker
 void vegetable_chopper(const char* name) {
@@ -29,6 +30,8 @@ int main() {
     // Check if threads are joinable before calling join()
     printf("Is Barron joinable? %s\n", barron.joinable() ? "true" : "false");
     printf("Is Olivia joinable? %s\n", olivia.joinable() ? "true" : "false");
+
+    bool chopping = false;
 
     // Detach threads, allowing them to continue execution independently
     barron.detach();

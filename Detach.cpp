@@ -1,45 +1,49 @@
 #include <thread>
 #include <chrono>
-#include <iostream>
+#include <cstdio>
 
-void chef_olivia() {
-    std::cout << "Olivia started & waiting for sausage to thaw..." << std::endl;
-    std::this_thread::sleep_for(std::chrono::seconds(3));
-    std::cout << "Olivia is done cutting sausage." << std::endl;
+// Global variable to control the chopping loop in vegetable_chopper function
+bool chopping = true;
+
+// Function representing the vegetable chopping task for each worker
+void vegetable_chopper(const char* name) {
+    unsigned int vegetable_count = 0;
+    // Continue chopping vegetables until chopping is set to false
+    while (chopping) {
+        vegetable_count++;
+    }
+    // Print the number of vegetables chopped by the worker
+    printf("%s chopped %u vegetables.\n", name, vegetable_count);
+    // Sleep for 10 seconds to simulate additional work after chopping
+    std::this_thread::sleep_for(std::chrono::seconds(10));
 }
 
 int main() {
-    std::cout << "Barron requests Olivia's help." << std::endl;
-    std::thread olivia(chef_olivia);
+    // Create two threads, Olivia and Barron, to perform vegetable chopping
+    std::thread olivia(vegetable_chopper, "Olivia");
+    std::thread barron(vegetable_chopper, "Barron");
+   
+    // Print a message indicating that Barron and Olivia are chopping vegetables
+    printf("Barron and Olivia are chopping vegetables...\n");
 
-    std::cout << "Barron continues cooking soup." << std::endl;
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    // Check if threads are joinable before calling join()
+    printf("Is Barron joinable? %s\n", barron.joinable() ? "true" : "false");
+    printf("Is Olivia joinable? %s\n", olivia.joinable() ? "true" : "false");
 
-    // Verificar si el hilo es joinable antes de llamar a join()
-    if (olivia.joinable()) {
-        std::cout << "Barron patiently waits for Olivia to finish and join..." << std::endl;
-        olivia.join();  // Esperar a que Olivia termine
-    }
+    // Detach threads, allowing them to continue execution independently
+    barron.detach();
+    olivia.detach();
 
-    std::cout << "Barron and Olivia are both done!" << std::endl;
+    // Print whether threads are joinable after detachment
+    printf("Is Barron joinable? %s\n", barron.joinable() ? "true" : "false");
+    printf("Is Olivia joinable? %s\n", olivia.joinable() ? "true" : "false");
 
-    // Agregar funcionalidad para demostrar detach
-    std::cout << "Creating a new thread for background task..." << std::endl;
-    std::thread background_thread([]() {
-        std::cout << "Background thread is doing some work..." << std::endl;
-        std::this_thread::sleep_for(std::chrono::seconds(2));
-        std::cout << "Background thread has finished its work." << std::endl;
-    });
+    // Allow threads to continue running in the background
 
-    // Verificar si el hilo es joinable antes de llamar a detach()
-    if (background_thread.joinable()) {
-        std::cout << "Detaching the background thread..." << std::endl;
-        background_thread.detach();  // El hilo ahora se ejecutará en segundo plano
-    }
-
-    // No podemos llamar a join() después de detach()
-
-    std::cout << "Main thread continues without waiting for the background thread." << std::endl;
+    // To give detached threads time to execute the vegetable_chopper function
+    printf("Barron and Olivia are possibly still chopping vegetables...\n");
+    
+    // Note: Threads are still running, but the main program may terminate
 
     return 0;
 }

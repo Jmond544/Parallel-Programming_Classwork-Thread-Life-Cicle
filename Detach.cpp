@@ -30,6 +30,8 @@ int main() {
     printf("Is Barron joinable? %s\n", barron.joinable() ? "true" : "false");
     printf("Is Olivia joinable? %s\n", olivia.joinable() ? "true" : "false");
 
+    bool chopping = false;
+
     // Detach threads, allowing them to continue execution independently
     barron.detach();
     olivia.detach();

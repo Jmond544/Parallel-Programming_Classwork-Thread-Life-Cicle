@@ -8,8 +8,7 @@
 
 
 ## Task reuse:
-Obtain the same number of egetable_count
-
+Two threads chopping vegetables
 
 
 This C++ code implements a basic example of parallel programming using threads (std::thread). The program simulates two individuals, Olivia and Barron, chopping vegetables concurrently.
@@ -128,28 +127,59 @@ Possible Issue:
 
 ### Show schedule effects
 
-txt
+#### Console output
+![Alt text](image.png)
+
+Barron and Olivia are chopping vegetables...:
+
+This message is printed from the main function, indicating that both threads (Barron and Olivia) are actively running the vegetable_chopper function.
+Is Barron joinable? true:
+
+This line checks if the thread Barron is joinable before any detach or join operations. Since neither detach nor join has been called on Barron yet, it is joinable.
+Is Olivia joinable? true:
+
+Similar to the case of Barron, this line checks if the thread Olivia is joinable before any detach or join operations. Both threads are joinable at this point.
+Is Barron joinable? false:
+
+After calling barron.detach(), the thread Barron is detached from the thread object, and it becomes non-joinable. This is why the result is false.
+Is Olivia joinable? false:
+
+Similarly, after calling olivia.detach(), the thread Olivia is detached, making it non-joinable. Hence, the result is false.
+Barron and Olivia are possibly still chopping vegetables...:
+
+This message is printed after detaching the threads, indicating that the main program is allowing the detached threads to continue running in the background.
+
+
 
 ### show or add functions for:
 
-### Join and joinable:
+#### Join:
 
-They are located at the end of the program within the `main` function.
-After creating the threads `catThread` and `mouseThread`, there is a loop that waits for both threads to be joinable before calling join.
-If a thread is not `joinable`, the loop breaks, and `join` is called to ensure the threads' completion before the main program terminates.
+join blocks the calling thread until the associated thread finishes its execution.
+It is used to synchronize the main thread with the completion of the associated thread.
+
+#### Joinable:
+
+joinable checks if the thread object is associated with a thread of execution.
+It is often used to determine whether it's safe to call join or detach on a thread.
+#### Detach:
+
+detach separates the thread of execution from the thread object.
+The detached thread can continue to execute independently, and its resources are automatically released when it finishes.
+After detaching, the thread object is no longer associated with any thread of execution.
 
 - join
   
   ```c++
-    catThread.join();
-    mouseThread.join();
+    barron.join();
+    olivia.join();
   ```
 
 - joinable
 
   ```c++
-    if (!catThread.joinable() || !mouseThread.joinable())
-      break;
+    printf("Is Barron joinable? %s\n", barron.joinable() ? "true" : "false");
+    printf("Is Olivia joinable? %s\n", olivia.joinable() ? "true" : "false");
   ```
 - detach
    
@@ -157,9 +187,8 @@ If a thread is not `joinable`, the loop breaks, and `join` is called to ensure t
    
 
   ```c++
-    // Detach the threads
-    catThread.detach();
-    mouseThread.detach();
+    barron.detach();
+    olivia.detach();
   ```
 
 
